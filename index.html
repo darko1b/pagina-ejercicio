@@ -5,25 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>START PAGE</title>  
     <link rel="stylesheet" href="styles.css">
- 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>                                       
 </head>
 <body> 
 
-    <nav class="navbar">
+
+    <nav class="navbar" role="navigation">
         <div class="navbar-inner"> 
             <ul class="navbar-left"> 
-                <li class="nav-item active"><a href="home">Home</a></li> 
-
-            </ul>  
-            <ul class="nav-right"> 
+                <li class="nav-item active"><a href="#home">Home</a></li> 
+            </ul> 
+ 
+ <button class="nav-toggle" aria-label="open menu" aria-expanded="false" aria-controls="nav-menu">
+ <span class="hamburguer"></span> 
+ </button>
+            <ul class="nav-right" id="nav-menu" role="menu"> 
                 <li class="nav-item"><a href="#section1">Link 1</a></li> 
                 <li class="nav-item"><a href="#section2">Link 2</a></li> 
                 <li class="nav-item"><a href="#quote">Link 3</a></li> 
                 <li class="nav-item"><a href="#footer">Link 4</a></li> 
             </ul>    
         </div>  
-    </nav>  
+    </nav>   
+
+    <div id="nav-overlay" class="nav-overlay" aria-hidden="true"></div>
 
     <header id="home" class="hero"> 
         <div class="hero-content"> 
@@ -38,10 +43,9 @@
             <div class="text"> 
                 <h2>Lorem Ipsum</h2> 
                 <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-          incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <p> 
+                   incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p> 
 
-                </p> 
+                <p> 
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             </p>
             </div> 
@@ -57,8 +61,8 @@
         <div class="container alt-layout"> 
             <div class="media"> 
                 <img src="images/coffee.png" alt="Coffee icon" onerror="this.onerror=null;this.src='https://via.placeholder.com/220/ff4b3e/ffffff?text=Cup';"> 
+</div> 
 
-            </div> 
             <div class="text"> 
                 <h2>Lorem Ipsum</h2> 
                 <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
@@ -83,9 +87,81 @@
             <a href="#home" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
         </div>
         <p class="powered">Powered by <a href="https://www.w3.css" target="_blank" rel="noopener">w3.css</a></p> 
-        
-    </footer>
+    </footer> 
+
+   <script>
+
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', function(e){
+        const href = this.getAttribute('href');
+        const target = document.querySelector(href);
+        if(target){
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    
+        closeMenu();
+      });
+    });
+
+ 
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    const navOverlay = document.getElementById('nav-overlay');
+
+    function openMenu() {
+      navMenu.classList.add('open');
+      navOverlay.classList.add('visible');
+      navToggle.setAttribute('aria-expanded', 'true');
+      navOverlay.setAttribute('aria-hidden','false');
+    
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      navMenu.classList.remove('open');
+      navOverlay.classList.remove('visible');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navOverlay.setAttribute('aria-hidden','true');
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
+  
+    navToggle.addEventListener('click', () => {
+      if(navMenu.classList.contains('open')) closeMenu();
+      else openMenu();
+    });
+
+    
+    navOverlay.addEventListener('click', closeMenu);
+
+    // cerrar con ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navMenu.classList.contains('open')) closeMenu();
+    });
 
 
+    const sections = document.querySelectorAll('section, header');
+    const navLinks = document.querySelectorAll('.nav-right a, .nav-left a');
+    function onScroll() {
+      const scrollPos = window.scrollY + window.innerHeight * 0.25;
+      let currentId = '';
+      sections.forEach(sec => {
+        if (sec.offsetTop <= scrollPos) currentId = sec.id || 'home';
+      });
+      navLinks.forEach(link => {
+        link.parentElement.classList.toggle('active', link.getAttribute('href') === '#' + currentId);
+      });
+      document.querySelector('.nav-left .nav-item').classList.toggle('active', currentId === 'home');
+    }
+    window.addEventListener('scroll', onScroll);
+    window.addEventListener('load', onScroll);
+
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) closeMenu();
+    });
+  </script>
+  
 </body>
 </html>
